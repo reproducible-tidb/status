@@ -1,8 +1,9 @@
 <template>
   <v-app>
     <v-app-bar app color="primary" dark>
-      <v-toolbar-title>Reproducible Builds</v-toolbar-title>
-
+      <v-toolbar-title>
+        {{ $route.name }} | Reproducible Builds</v-toolbar-title
+      >
       <v-spacer></v-spacer>
 
       <v-btn icon target="https://github.com/reproducible-tidb">

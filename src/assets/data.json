@@ -1,47 +1,41 @@
 {
   "packages": [
     {
-      "pkgname": "helloworld",
-      "name": "Hello World",
-      "git": "https://github.com/YukariChiba/hello-world",
-      "icon": "alert-decagram" 
-    },
-    {
       "pkgname": "tidb",
       "name": "TiDB",
-      "git": "https://github.com/YukariChiba/hello-world" 
+      "git": "https://github.com/YukariChiba/hello-world",
+      "versions": ["v5.3.0-1"]
     },
     {
       "pkgname": "tidb-operator",
       "name": "TiDB Operator",
-      "git": "https://github.com/YukariChiba/hello-world" 
+      "git": "https://github.com/YukariChiba/hello-world",
+      "versions": ["v1.2.6-1"]
     },
     {
       "pkgname": "tiflow",
       "name": "TiFlow",
-      "git": "https://github.com/YukariChiba/hello-world"
+      "git": "https://github.com/YukariChiba/hello-world",
+      "versions": ["v5.3.0-1"]
     },
     {
       "pkgname": "tiup",
       "name": "TiUp",
-      "git": "https://github.com/YukariChiba/hello-world"
+      "git": "https://github.com/YukariChiba/hello-world",
+      "versions": ["v1.8.1-1"]
     },
     {
       "pkgname": "pd",
       "name": "Placement Driver for TiKV",
-      "git": "https://github.com/YukariChiba/hello-world"
+      "git": "https://github.com/YukariChiba/hello-world",
+      "versions": ["v5.3.0-1"]
     }
   ],
   "builders": [
     {
       "ciname": "githubaction",
       "name": "Github Action",
-      "results_endpoint": ""
-    },
-    {
-      "ciname": "gitlabci",
-      "name": "Gitlab CI",
-      "results_endpoint": ""
+      "results_endpoint": "https://raw.githubusercontent.com/reproducible-tidb/packaging/results-githubaction/"
     }
   ]
 }

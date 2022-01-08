@@ -11,7 +11,7 @@ const routes = [
     component: Home,
   },
   {
-    path: "/pkginfo/:pkgname",
+    path: "/pkginfo/:pkgname/:version",
     name: "Package Info",
     component: () => import("../views/Info.vue"),
   },

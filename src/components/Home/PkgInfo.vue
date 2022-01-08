@@ -14,7 +14,9 @@
           <v-icon large class="dashboard-icon">mdi-{{ icon }}</v-icon>
           <v-list-item three-line>
             <v-list-item-content>
-              <div class="overline mb-4" style="flex: unset">test</div>
+              <div class="overline mb-4" style="flex: unset">
+                {{ pkg.version }}
+              </div>
               <v-spacer style="flex: unset" />
               <v-chip
                 class="overline mb-4"
@@ -43,25 +45,29 @@
 </template>
 <script>
 import { DateParser } from "@/utils/DateUtil";
+import { CheckSHA } from "@/utils/CheckUtil";
 import sitedata from "@/assets/data.json";
-import demodata from "@/assets/demo.json";
 
 export default {
   props: ["pkg", "active", "toggle"],
   data: () => ({
     loading: true,
-    demodata: demodata,
     datalist: [],
   }),
   methods: {
     card_click: function () {
-      this.$router.push("/pkginfo/" + this.pkg.pkgname);
+      this.$router.push(
+        "/pkginfo/" + this.pkg.pkgname + "/" + this.pkg.version
+      );
     },
   },
   computed: {
-    is_failed: function () {
-      if (this.pkg.status != null) return this.pkg.status[0] === "F";
-      else return false;
+    is_validated: function () {
+      let shalist = [];
+      this.datalist.forEach((builder) => {
+        shalist.push(builder.result.sha256);
+      });
+      return CheckSHA(shalist);
     },
     icon: function () {
       if (typeof this.pkg.icon != "undefined") {
@@ -76,9 +82,22 @@ export default {
           color: "default",
           text: "加载中",
         };
+      // if (this.datalist.length == 1) {
+      //   return {
+      //     color: "warning",
+      //     text: "单一来源",
+      //   };
+      // }
+      if (this.is_validated) {
+        return {
+          color: "success",
+          text:
+            "成功 (" + this.datalist.length + "/" + this.datalist.length + ")",
+        };
+      }
       return {
-        color: "success",
-        text: "成功 (2/2)",
+        color: "failed",
+        text: "失败",
       };
     },
     statusInfo: function () {
@@ -92,13 +111,15 @@ export default {
     },
   },
   mounted: function () {
-    setTimeout(() => {
-      sitedata.builders.forEach((builder) => {
-        builder.result = demodata;
-        this.datalist.push(builder);
-      });
-      this.loading = false;
-    }, 1500);
+    sitedata.builders.forEach((builder) => {
+      this.$ajax
+        .get(builder.results_endpoint + this.pkg.pkgid + ".tar.json")
+        .then((resp) => {
+          builder.result = resp.data;
+          this.datalist.push(builder);
+          this.loading = false;
+        });
+    });
   },
 };
 </script>

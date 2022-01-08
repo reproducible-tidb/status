@@ -3,6 +3,7 @@
     <v-card class="mb-4 pa-4 pb-0">
       <v-card-title class="text-h3"
         ><v-icon x-large left>mdi-{{ icon }}</v-icon> {{ pkginfo.name }}
+        <v-chip class="ml-4">{{ $route.params.version }}</v-chip>
       </v-card-title>
       <v-card-subtitle class="text-h5">
         Checksum 检查状态：
@@ -18,6 +19,7 @@
     <v-card>
       <v-list>
         <v-skeleton-loader v-if="loading" type="list-item-avatar" />
+        <v-skeleton-loader v-if="loading" type="list-item-avatar" />
         <v-list-item v-for="builder in builders" :key="builder.ciname">
           <v-list-item-avatar>
             <v-icon color="success" dark> mdi-check </v-icon>
@@ -27,8 +29,13 @@
             <v-list-item-title>{{ builder.name }}</v-list-item-title>
 
             <v-list-item-subtitle
-              >SHA256:
-              c38a445858dfc331dfc95fcaaa653d0125cc5ccdedf03eb075b9644218b02375</v-list-item-subtitle
+              >SHA256: {{ builder.result.sha256 }}</v-list-item-subtitle
+            >
+            <v-list-item-subtitle
+              >Updated:
+              {{
+                new Date(builder.result.timestamp * 1000)
+              }}</v-list-item-subtitle
             >
           </v-list-item-content>
 
@@ -46,7 +53,7 @@
 <script>
 import { DateParser } from "@/utils/DateUtil";
 import sitedata from "@/assets/data.json";
-import demodata from "@/assets/demo.json";
+import { CheckSHA } from "@/utils/CheckUtil";
 
 export default {
   data: () => ({
@@ -54,24 +61,52 @@ export default {
     loading: true,
   }),
   mounted: function () {
-    setTimeout(() => {
-      sitedata.builders.forEach((builder) => {
-        builder.result = demodata;
-        this.builders.push(builder);
-      });
-      this.loading = false;
-    }, 1500);
+    sitedata.builders.forEach((builder) => {
+      this.$ajax
+        .get(
+          builder.results_endpoint +
+            this.pkginfo.pkgname +
+            "-" +
+            this.$route.params.version +
+            ".tar.json"
+        )
+        .then((resp) => {
+          builder.result = resp.data;
+          this.builders.push(builder);
+          this.loading = false;
+        });
+    });
   },
   computed: {
+    is_validated: function () {
+      let shalist = [];
+      this.builders.forEach((builder) => {
+        shalist.push(builder.result.sha256);
+      });
+      return CheckSHA(shalist);
+    },
     statusChip: function () {
       if (this.loading)
         return {
           color: "default",
           text: "加载中",
         };
+      // if (this.builders.length == 1) {
+      //   return {
+      //     color: "warning",
+      //     text: "单一来源",
+      //   };
+      // }
+      if (this.is_validated) {
+        return {
+          color: "success",
+          text:
+            "成功 (" + this.builders.length + "/" + this.builders.length + ")",
+        };
+      }
       return {
-        color: "success",
-        text: "成功 (2/2)",
+        color: "failed",
+        text: "失败",
       };
     },
     last_updated: function () {

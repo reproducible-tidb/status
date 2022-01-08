@@ -21,7 +21,7 @@
         <v-item-group v-model="selected">
           <v-row>
             <v-item
-              v-for="package_item in packages"
+              v-for="package_item in merged_packages"
               :key="package_item.pkgname"
               v-slot:default="{ active, toggle }"
             >
@@ -47,5 +47,22 @@ export default {
     status: null,
     packages: sitedata.packages,
   }),
+  computed: {
+    merged_packages: function () {
+      let package_list = [];
+      this.packages.forEach((pkg) => {
+        pkg.versions.forEach((ver) => {
+          package_list.push({
+            pkgid: pkg.pkgname + "-" + ver,
+            pkgname: pkg.pkgname,
+            name: pkg.name,
+            git: pkg.git,
+            version: ver,
+          });
+        });
+      });
+      return package_list;
+    },
+  },
 };
 </script>
