@@ -82,12 +82,12 @@ export default {
           color: "default",
           text: "加载中",
         };
-      // if (this.datalist.length == 1) {
-      //   return {
-      //     color: "warning",
-      //     text: "单一来源",
-      //   };
-      // }
+      if (this.datalist.length == 1) {
+        return {
+          color: "warning",
+          text: "单一来源",
+        };
+      }
       if (this.is_validated) {
         return {
           color: "success",
@@ -96,7 +96,7 @@ export default {
         };
       }
       return {
-        color: "failed",
+        color: "danger",
         text: "失败",
       };
     },

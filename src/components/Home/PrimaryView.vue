@@ -31,7 +31,20 @@
         </v-item-group>
       </v-col>
     </v-col>
-    <v-col cols="12" md="3"> testx </v-col>
+    <v-col cols="12" md="3">
+      <v-card>
+        <v-card-title>Builder 信息</v-card-title>
+        <v-list>
+          <v-list-item v-for="builder in builders" :key="builder.ciname">
+            <v-list-item-title
+              ><v-icon left>mdi-robot</v-icon
+              >{{ builder.name }}</v-list-item-title
+            >
+            <v-list-item-subtitle>{{ builder.ciname }}</v-list-item-subtitle>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-col>
   </v-row>
 </template>
 <script>
@@ -46,6 +59,7 @@ export default {
     selected: null,
     status: null,
     packages: sitedata.packages,
+    builders: sitedata.builders,
   }),
   computed: {
     merged_packages: function () {

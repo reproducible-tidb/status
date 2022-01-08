@@ -36,6 +36,11 @@
       "ciname": "githubaction",
       "name": "Github Action",
       "results_endpoint": "https://raw.githubusercontent.com/reproducible-tidb/packaging/results-githubaction/"
+    },
+    {
+      "ciname": "circleci",
+      "name": "Circle CI",
+      "results_endpoint": "https://raw.githubusercontent.com/reproducible-tidb/packaging/circle_ci_release/results/"
     }
   ]
 }
